@@ -659,34 +659,50 @@
             }
         }
 
-        async function handleAddUser(e) {
-            e.preventDefault();
-            const nik = document.getElementById('admin-add-nik').value.trim();
-            const name = document.getElementById('admin-add-name').value.trim();
+       async function handleAddUser(e) {
+    e.preventDefault();
+    
+    const nikInput = document.getElementById('admin-add-nik');
+    const nameInput = document.getElementById('admin-add-name');
 
-            try {
-                const res = await fetch(`${API_BASE_URL}/voters`, {
-                    method: 'POST',
-                    headers: getAuthHeaders(),
-                    body: JSON.stringify({ nik, name })
-                });
+    const nik = nikInput.value.trim();
+    const name = nameInput.value.trim();
 
-                const data = await res.json();
-                if (!data.success) {
-                    Swal.fire('Gagal', data.message, 'error');
-                    return;
-                }
+    if (!nik) {
+        Swal.fire('Gagal', 'NIK wajib diisi di form!', 'error');
+        return;
+    }
 
-                document.getElementById('admin-add-nik').value = '';
-                document.getElementById('admin-add-name').value = '';
+    try {
+        const res = await fetch(`${API_BASE_URL}/voters`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // 👈 WAJIB: Agar backend bisa baca JSON
+                ...(typeof getAuthHeaders === 'function' ? getAuthHeaders() : {})
+            },
+            // 👈 Mengirim key 'nama' dan 'name' agar kompatibel dengan backend
+            body: JSON.stringify({ nik: nik, nama: name, name: name })
+        });
 
-                renderAdminDashboard();
-                Swal.fire('Berhasil', `DPT Baru atas nama ${name} berhasil ditambahkan.`, 'success');
-            } catch (err) {
-                Swal.fire('Gagal', 'Tidak dapat menambahkan pemilih.', 'error');
-            }
+        const data = await res.json();
+        if (!data.success) {
+            Swal.fire('Gagal', data.message, 'error');
+            return;
         }
 
+        nikInput.value = '';
+        nameInput.value = '';
+
+        if (typeof renderAdminDashboard === 'function') {
+            renderAdminDashboard();
+        }
+        
+        Swal.fire('Berhasil', `DPT Baru atas nama ${name} berhasil ditambahkan.`, 'success');
+    } catch (err) {
+        console.error(err);
+        Swal.fire('Gagal', 'Tidak dapat terhubung ke server backend.', 'error');
+    }
+}
         async function handleAddCandidate(e) {
             e.preventDefault();
             const name = document.getElementById('cand-input-name').value.trim();
