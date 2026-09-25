@@ -1087,7 +1087,7 @@
             });
         }
 
-        function renderUsersTable(users) {
+               function renderUsersTable(users) {
             const tbody = document.getElementById('table-users-body');
             if (!users || users.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-slate-400">Belum ada data DPT.</td></tr>`;
@@ -1103,14 +1103,18 @@
                             ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">Sudah Memilih</span>` 
                             : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">Belum Memilih</span>`}
                     </td>
-                    <td class="p-3 text-right">
+                    <td class="p-3 text-right space-x-1">
                         ${u.has_voted 
-                            ? `<button onclick="resetUserVote('${u.nik}')" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded text-[11px] font-semibold border border-rose-200 transition">Reset Suara</button>` 
-                            : `<span class="text-slate-300 text-[11px] italic">-</span>`}
+                            ? `<button onclick="resetUserVote('${u.nik}')" class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded text-[11px] font-semibold border border-amber-200 transition">Reset Suara</button>` 
+                            : ''}
+                        <button onclick="deleteVoter('${u.nik}')" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded text-[11px] font-semibold border border-rose-200 transition">
+                            <i class="fa-solid fa-trash text-[10px]"></i> Hapus
+                        </button>
                     </td>
                 </tr>
             `).join('');
         }
+
 
         function renderCandidatesTable(candidates) {
             const tbody = document.getElementById('table-candidates-body');
