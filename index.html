@@ -769,6 +769,39 @@
                 Swal.fire('Gagal', 'Gagal me-reset suara pemilih.', 'error');
             }
         }
+        async function deleteVoter(nik) {
+            const confirm = await Swal.fire({
+                title: 'Hapus Pemilih (DPT)?',
+                text: `Apakah Anda yakin ingin menghapus pemilih dengan NIK: ${nik}? Jika pemilih sudah voting, suaranya akan otomatis ditarik.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal'
+            });
+
+            if (!confirm.isConfirmed) return;
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/voters/${nik}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+
+                const data = await res.json();
+                if (!data.success) {
+                    Swal.fire('Gagal', data.message, 'error');
+                    return;
+                }
+
+                // Muat ulang data dashboard admin secara realtime
+                renderAdminDashboard();
+                Swal.fire('Berhasil', data.message, 'success');
+            } catch (err) {
+                Swal.fire('Gagal', 'Terjadi kesalahan saat menghapus pemilih.', 'error');
+            }
+        }
 
         async function confirmResetAllVotes() {
             const confirm = await Swal.fire({
